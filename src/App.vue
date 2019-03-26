@@ -1,81 +1,87 @@
 <template>
-
-
-
-<div>
-    <div id="droppable" class="droppable">Drop here</div>
- <div class="draggable">Drag me</div>
-    <div class="container-fluid bg-success">
-        <div class="row">
-            <div class="col-12 col-lg-6 droppable">
-                zona 1
-            </div>
-            <div class="col-12 col-lg-6 bg-danger droppable">
-               zona 2
+    <div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 col-lg-4 droppable border border-dark" v-for="(zona, index) in zonas" :id="zona.id">{{zona.title}}
+                    <div v-for="(boton, index) in botones" v-show="boton.zona == zona.id" class="draggable border btn btn-info" style="z-index: 10" :hidden="boton.hidden" :id="boton.id">{{boton.title}}</div>
+                </div>
+                <div v-for="(boton, index) in botones" v-show="boton.zona == null" class="draggable border btn btn-info" :hidden="boton.hidden" :id="boton.id">{{boton.title}}</div>
             </div>
         </div>
     </div>
-<div class="draggable border btn btn-info" :style="{ 'opacity': opacity, 'position': 'relative' }">prueba</div>
-
-<div class="draggable border btn btn-info" :style="{ 'opacity': opacity, 'position': 'relative' }">prueba2</div>
-
-</div>
 </template>
 
 <script>
 
   export default {
     mounted() {
-    var self = this;
+        var self = this;
         $( ".draggable" ).draggable({ 
-    revert: true,
+                revert: true,
+        });
+        $(".droppable").droppable({
 
-     }).data(self.sotado, false);
-        $( ".droppable" ).droppable({
-            hoverClass: "boxHover",
-          drop: function() {
-            console.log(self.alertini('holi'));
-          }
-        }).data(self.sotado, false);
-
+            drop: function( event, ui) {
+                console.log(event.target);
+                console.log(event.toElement);
+                console.log(ui);
+                console.log(event);
+                self.aZona(event.target.id, event.toElement.id);
+            }
+        });
     },
     data() {
       return {
+        z1: 'zona1',
         activo: false,
-        lists: [
-          [],
-          ['A', 'B', 'C'],
-          ['D', 'Educative esta es una prueba aspera', 'F'],
+        zonas: [
+            {
+                id: 1,
+                title: 'Zona1'
+            },
+            {
+                id: 2,
+                title: 'Zona2'
+            },
+            {
+                id: 3,
+                title: 'Zona3'
+            },
         ],
-        zona1: [],
-        zona2: [],
-        origXPos: [],
-        origYPos: [],
-        attempts: 0,
-        correct: 0,
-        array: null,
-        hold: null,
-        opacity: 1,
-        soltado: true,
+        botones: [
+
+            {
+                id: 1,
+                title: 'prueba',
+                hidden: false,
+                zona: null,
+            },
+            {
+                id: 2,
+                title: 'prueba2',
+                hidden: false,
+                zona: null,
+            },
+            {
+                id: 3,
+                title: 'prueba3',
+                hidden: false,
+                zona: null,
+            }
+
+        ],
       };
     },
     methods: {
-    alertini: function(a) { alert(a) },
-        log: function(e) { console.log(e);
-        console.log(e.type) },
+    aZona: function(i, b) {
+        var btn = parseInt(b, 10) - 1;
+        if (this.botones[btn].zona || this.botones[btn].zona == null) {
+        this.botones[btn].zona = i;
+    };
+    },
+    draggablexl: function(){
+        $forceUpdate();
+        },
     },
   };
 </script>
-
-<style scoped>
-  /* Prevent the text contents of draggable elements from being selectable. */
-[draggable] {
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
-  /* Required to make elements draggable in old WebKit */
-  -khtml-user-drag: element;
-  -webkit-user-drag: element;
-}
-</style>
