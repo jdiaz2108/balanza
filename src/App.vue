@@ -8,44 +8,45 @@
   background-size: cover;">
             <div class="row ">
                 <div class="col-5 my-3">
-                    <div class="col-11 mx-auto p-0">
-                        <img src="dist/Entregables/instrucciones.png" alt="" class="img-fluid shadow-lg">
+                    <div class="col-11 mx-auto p-2 h5 text-center bg-white" style="border-radius: 15px; ">
+
+                       <p class="m-0">Arrastra las Variables que evalúa el cliente hasta su respectiva posición de la balanza</p>
                     </div>
-                    <div class="col-11 mx-auto text-center my-4 pt-1 border borderbox">
+                    <div class="col-11 mx-auto text-center mt-2 pt-1 border borderbox" id="set">
                         <div v-for="(boton, index) in orderedUsers" v-show="boton.zona == null" class="draggable border btn btn-light col-5 mx-2 my-1 shadow"  @mouseover="mouseOver()"  :style="z1" style="border-radius: 10px;" :id="boton.id">{{boton.title}}</div>
 
-                        <div class="btn col-5 mx-2 my-1"  @mouseover="mouseOver()"  :style="z1" style="border-radius: 10px; border: 1px"></div>
+                        <div class="btn col-5 mx-2"  @mouseover="mouseOver()"  :style="z1" style="border-radius: 10px; border: 1px"></div>
 
                     </div>
                 <div class="col-8 my-3 text-center mx-auto">
 
 
-                 <button v-if="faltan <= botones.length - 1 " type="button" class="btn btn-danger btn-lg align-self-end" @click="reload()">
+                 <button v-if="faltan <= botones.length - 1 " type="button" class="btn btn-danger align-self-end" @click="reload()">
                 Volver a empezar
                 </button>
 
             <!-- Modal -->
             </div>
                 </div>
-        <div class="col-7 my-3">
+        <div class="col-7 my-2">
             <div class="row justify-content-around" style="z-index: -1px">
-                <div class="col-6 m-0" v-for="(zona, index) in zonas" style="z-index: -1px">
-                    <div class=" h4 text-center mb-3 text-white">{{zona.cont}}</div>
+                <div class="col-6 m-0 droppable" v-for="(zona, index) in zonas"  :id="zona.id" style="z-index: -1px; max-width: 100% !important">
+                    <div class=" h4 text-center mb-2 text-white droppable" :id="zona.id">{{zona.cont}}</div>
 
-                    <div class="row justify-content-start droppable border borderbox m-1" style="min-height: 350px;" :id="zona.id">
-
-
+                    <div class="col-12 row border borderbox" style="min-height: 300px;" :id="zona.id">
 
 
-                        <div v-for="(boton, index) in orderedUsers" v-show="boton.zona == zona.id" class="col-6 p-1" style="z-index: -1px">
-                            <div @mouseover="mouseOver()" class="draggable border btn btn-light my-1 shadow btn-block" style="z-index: 10; border-radius: 10px;" :id="boton.id">{{boton.title}}</div>
+
+
+                        <div v-for="(boton, index) in orderedUsers" v-show="boton.zona == zona.id" class="col-6"  style="z-index: -1px">
+                            <div @mouseover="mouseOver()" class="draggable border btn btn-sm btn-light my-1 shadow btn-block" style="z-index: 10; border-radius: 10px;" :id="boton.id">{{boton.title}}</div>
                         </div>
                     </div>
                     
                 </div>
             </div>
 
-            <div class="col-8 my-1 mx-auto">
+            <div class="col-8 mx-auto">
                 <img :src="'dist/Entregables/0'+this.blnc+'.png'" alt="" class="img-fluid">
 
                 <!-- Button trigger modal -->
@@ -54,18 +55,16 @@
             <!-- Modal -->
             </div>
 
-            <div class="col-8 my-3 text-center mx-auto">
+            <div class="col-8 text-center mx-auto">
 
 
                 <!-- Button trigger modal -->
 
-               
 
-
-                <button v-if="faltan == 0" type="button" class="btn btn-pink btn-lg" @click="validator()">
+                <button v-if="faltan == 0" type="button" class="btn btn-pink" @click="validator()">
                 Validar
                 </button>
-                <button v-else type="button" class="btn btn-pink2 btn-lg" disabled>
+                <button v-else type="button" class="btn btn-pink2" disabled>
                 Validar
                 </button>
 
@@ -99,6 +98,7 @@ export default {
     },
     mounted() {
         var self = this;
+        $( "#set div" ).draggable({ stack: "#set div" });
         $( ".draggable" ).draggable({ 
             revert: true,
         });
@@ -124,8 +124,8 @@ export default {
             blnc: 3,
             movimiento: 0,
             zonas: [
-                { id: 1, title: 'Zona1', peso: 0, porcentaje: null, cont: 'Costo' },
-                { id: 2, title: 'Zona2', peso: 0, porcentaje: null, cont: 'Beneficio' }
+                { id: 1, title: 'Zona1', peso: 0, porcentaje: null, cont: 'Beneficio' },
+                { id: 2, title: 'Zona2', peso: 0, porcentaje: null, cont: 'Costo' }
             ],
             botones: [
                 { title: 'Es Confiable', val: 1 },
@@ -190,6 +190,7 @@ export default {
         },
         validator: function() {
             for (var i = 0; i < this.botones.length; i++) {
+                console.log(this.botones[i])
 
                 if (this.botones[i].val != this.botones[i].zona) {
                     this.pasar = false;
@@ -198,7 +199,7 @@ export default {
                 } else {
                     this.pasar = true;
                 }
-            }
+                }
             if (this.pasar) { this.validatorSuccess() }
             // this.validatorSuccess();
         },
@@ -219,7 +220,7 @@ export default {
             Swal.fire({
                 text: 'Así no se categorizan las variables que evalúa el cliente.',
                 type: 'warning',
-                confirmButtonText: '¡Intentalo de nuevo!',
+                confirmButtonText: '¡Inténtalo de nuevo!',
                 allowOutsideClick: false,
                 customClass: {
                     confirmButton: 'btn btn-danger btn-lg',
